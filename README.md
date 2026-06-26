@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Welcome to your Lovable project
 
 ## Project info
@@ -71,3 +72,7 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+=======
+# 3D-Interactive-learning-platform
+B.Tech mini project: An interactive 3D learning platform developed using React, TypeScript, Vite, and Tailwind CSS to provide immersive educational experiences.
+>>>>>>> ded772ea2879f24f26d172d5839cc171f54d6bab
