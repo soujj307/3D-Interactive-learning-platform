@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#1a1025] text-white antialiased;
+    background: radial-gradient(circle at top center, #2e1a4a 0%, #1a1025 100%);
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* Custom glass effect for cards */
+.glass-card {
+  @apply bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all duration-300;
+}
