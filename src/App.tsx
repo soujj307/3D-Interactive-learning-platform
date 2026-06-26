@@ -1,89 +1,80 @@
-import React, { useState, useRef } from 'react';
-import { Dna, Orbit, Shapes, Globe2, Beaker, Activity, Play, BookOpen, Volume2 } from 'lucide-react';
+import { useEffect, useState } from "react";
+import Subject3D from "./components/Subject3D";
 
-const subjects = [
-  { id: 'Biology', icon: <Dna />, sub: 'DNA Helix', desc: 'Explore DNA, cells, and human anatomy in 3D', color: 'hover:border-green-500' },
-  { id: 'Space Science', icon: <Orbit />, sub: 'Solar System', desc: 'Journey through the solar system and beyond', color: 'hover:border-blue-500' },
-  { id: 'Mathematics', icon: <Shapes />, sub: '3D Shapes', desc: 'Visualize geometric shapes and mathematical concepts', color: 'hover:border-purple-500' },
-  { id: 'Geography', icon: <Globe2 />, sub: '3D Globe', desc: "Explore Earth's features and continents", color: 'hover:border-emerald-500' },
-  { id: 'Chemistry', icon: <Beaker />, sub: 'Molecules', desc: 'Interact with molecules and atomic structures', color: 'hover:border-pink-500' },
-  { id: 'Physics', icon: <Activity />, sub: 'Pendulum', desc: 'Understand forces, energy, and physical laws', color: 'hover:border-orange-500' },
+type Subject = {
+  title: string;
+  description: string;
+  tag: string;
+  kind: "biology" | "space" | "mathematics" | "geography" | "chemistry" | "physics";
+};
+
+const subjects: Subject[] = [
+  { title: "Biology", description: "Rotate and zoom a 3D DNA double helix", tag: "DNA HELIX", kind: "biology" },
+  { title: "Space Science", description: "Watch planets orbit the sun in real time", tag: "SOLAR SYSTEM", kind: "space" },
+  { title: "Mathematics", description: "Explore 3D geometric shapes from every angle", tag: "3D SHAPES", kind: "mathematics" },
+  { title: "Geography", description: "Spin an interactive 3D globe", tag: "3D GLOBE", kind: "geography" },
+  { title: "Chemistry", description: "Inspect a molecule's atomic structure in 3D", tag: "MOLECULES", kind: "chemistry" },
+  { title: "Physics", description: "Observe a swinging pendulum simulation", tag: "PENDULUM", kind: "physics" },
 ];
 
 export default function App() {
-  const [view, setView] = useState<'home' | 'detail'>('home');
-  const [activeSubject, setActiveSubject] = useState<any>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const [mounted, setMounted] = useState(false);
+  const [active, setActive] = useState<Subject | null>(null);
 
-  const startLearning = (subject: any) => {
-    setActiveSubject(subject);
-    setView('detail');
-    audioRef.current?.play().catch(() => {}); // Play BGM on click
-  };
+  useEffect(() => setMounted(true), []);
 
-  if (view === 'detail') {
-    return (
-      <div className="h-screen flex flex-col bg-black">
-        <header className="p-4 border-b border-white/10 flex justify-between items-center bg-[#1a1025]">
-          <button onClick={() => setView('home')} className="text-sm text-gray-400 hover:text-white">
-            ← Back to Subjects
-          </button>
-          <div className="flex items-center gap-2 font-bold">
-            {activeSubject.icon} {activeSubject.id}
-          </div>
-          <div className="flex gap-2">
-            <button className="px-3 py-1 bg-blue-600 rounded text-xs">Learn Mode</button>
-            <button className="px-3 py-1 bg-white/10 rounded text-xs">Play Mode</button>
-          </div>
-        </header>
-        <main className="flex-1 flex items-center justify-center relative">
-          <div className="absolute left-8 bottom-8 text-xs text-gray-500 space-y-1">
-            <p>Controls:</p>
-            <p>• Click & drag to rotate</p>
-            <p>• Scroll to zoom</p>
-          </div>
-          <p className="text-xl animate-pulse">Rendering {activeSubject.id} 3D Model...</p>
-        </main>
-      </div>
-    );
-  }
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setActive(null);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
-    <div className="min-h-screen p-8 max-w-7xl mx-auto">
-      <audio ref={audioRef} src="/bgm.mp3" loop />
-      
-      <header className="text-center mb-12">
-        <h1 className="text-6xl font-black mb-2 tracking-tighter">Learn Craft</h1>
-        <p className="text-gray-400 text-lg">Interactive Web-Based Learning and Gaming Platform</p>
-        
-        <div className="flex justify-center gap-8 mt-8 text-sm font-medium">
-          <button className="flex items-center gap-2 hover:text-blue-400"><BookOpen size={16}/> Learn Mode</button>
-          <button className="flex items-center gap-2 hover:text-purple-400"><Play size={16}/> Play Mode</button>
-          <button className="flex items-center gap-2 hover:text-pink-400"><Volume2 size={16}/> Audio Narration</button>
-        </div>
-      </header>
+    <main style={{ minHeight: "100vh", background: "#0b0f19", color: "#e2e8f0", fontFamily: "system-ui, sans-serif" }}>
+      <section style={{ textAlign: "center", padding: "48px 16px" }}>
+        <h1 style={{ fontSize: "3rem", fontWeight: 800, background: "linear-gradient(90deg,#8b5cf6,#ec4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+          LearnVerse
+        </h1>
+        <p style={{ marginTop: 8, color: "#94a3b8" }}>Interactive Web-Based Learning and Gaming Platform</p>
+      </section>
 
-      <div className="max-w-5xl mx-auto">
-        <h2 className="text-2xl font-bold text-center mb-10">Choose Your Learning Adventure</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {subjects.map((s) => (
-            <div 
-              key={s.id}
-              onClick={() => startLearning(s)}
-              className={`glass-card p-8 rounded-2xl cursor-pointer group ${s.color}`}
-            >
-              <div className="mb-4 text-white/80 group-hover:scale-110 transition-transform">
-                {React.cloneElement(s.icon as React.ReactElement, { size: 32 })}
-              </div>
-              <h3 className="text-2xl font-bold mb-1">{s.id}</h3>
-              <p className="text-gray-400 text-xs leading-relaxed mb-4">{s.desc}</p>
-              <span className="text-[10px] font-mono py-1 px-2 bg-black/40 rounded border border-white/5 uppercase tracking-wider">
-                {s.sub}
-              </span>
+      <section style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px 48px", display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
+        {subjects.map((s) => (
+          <article key={s.title} style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: 16, overflow: "hidden" }}>
+            <div style={{ position: "relative", height: 240, background: "#0b1220", cursor: "grab" }}>
+              {mounted ? <Subject3D kind={s.kind} /> : <div style={{ display: "flex", height: "100%", alignItems: "center", justifyContent: "center", color: "#64748b" }}>Loading 3D…</div>}
+              <button
+                onClick={() => setActive(s)}
+                style={{ position: "absolute", top: 12, right: 12, background: "rgba(15,23,42,0.7)", border: "1px solid #334155", borderRadius: 8, padding: "6px 10px", color: "#e2e8f0", cursor: "pointer", backdropFilter: "blur(4px)" }}
+              >
+                ⤢
+              </button>
             </div>
-          ))}
+            <div style={{ padding: 20 }}>
+              <h3 style={{ fontSize: "1.25rem", fontWeight: 700 }}>{s.title}</h3>
+              <p style={{ marginTop: 6, fontSize: "0.875rem", color: "#94a3b8" }}>{s.description}</p>
+              <span style={{ display: "inline-block", marginTop: 12, background: "#1e293b", padding: "4px 10px", borderRadius: 6, fontSize: "0.75rem", fontFamily: "monospace", letterSpacing: 1 }}>{s.tag}</span>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      {active && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(11,15,25,0.95)", display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #1f2937", padding: "16px 24px" }}>
+            <div>
+              <h3 style={{ fontSize: "1.25rem", fontWeight: 700 }}>{active.title}</h3>
+              <p style={{ fontSize: "0.875rem", color: "#94a3b8" }}>Drag to rotate · scroll to zoom</p>
+            </div>
+            <button onClick={() => setActive(null)} style={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, padding: "8px 12px", color: "#e2e8f0", cursor: "pointer" }}>
+              ✕
+            </button>
+          </div>
+          <div style={{ flex: 1, position: "relative", cursor: "grab" }}>
+            <Subject3D kind={active.kind} />
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </main>
   );
 }
